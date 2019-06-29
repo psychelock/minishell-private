@@ -37,7 +37,8 @@ int execute_node(char **tokens)
             return builtin_cd(tokens+1);
         else if (check == 3)
             return builtin_exit(tokens+1);
-        return 0;
+        else
+            return builtin_kill(tokens+1);
     }
     else
     {

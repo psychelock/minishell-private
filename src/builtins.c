@@ -65,3 +65,33 @@ int builtin_exit(char **args)
         fprintf(stderr, "Invalid argument");
     return atoi(args[0]) + 420;
 }
+
+static int is_signal(int signal)
+{
+    return ((signal >=1 && signal <= 3) || (signal == 8) || (signal == 9) ||\
+                     (signal == 14) || (signal ==15));
+}
+
+int builtin_kill(char **args)
+{
+    if((strcmp(args[0], "--signal") != 0) && (strcmp(args[0], "-signal") != 0)\
+            && (strcmp(args[0], "-s") != 0))
+    {
+        fprintf(stderr, "Invalid argument\n");
+        return 1;
+    }
+    else if(!args[1] ||(int)strlen(args[1]) != snprintf(NULL, 0, "%i", atoi(args[1])) ||\
+            !is_signal(atoi(args[1])))
+    {
+        fprintf(stderr, "Invalid signal specification\n");
+        return 1;
+    }
+    else if(!args[2] || (int)strlen(args[2]) != snprintf(NULL, 0, "%i", atoi(args[2])) ||\
+            (atoi(args[2]) <= 0))
+    {
+        fprintf(stderr, "Argument must be process or job ID\n");
+        return 1;
+    }
+    else
+        return kill (atoi(args[2]), atoi(args[1]));
+}
