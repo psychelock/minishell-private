@@ -138,7 +138,7 @@ int execute_node(char **tokens)
     }
 }
 
-int execute_redir(struct Redir* node)
+int execute_redir_greater(struct Redir *node, int ionum)
 {
     pid_t child_pid, parent_pid;
     int child_status;
@@ -150,7 +150,7 @@ int execute_redir(struct Redir* node)
             fprintf(stderr, "Fork fail\n");
             return -1;
         case 0:
-            if(dup2(fd, 2) < 0)
+            if(dup2(fd, ionum) < 0)
             {
                 fprintf(stderr, "dup2 fail\n");
                 return -1;
@@ -168,3 +168,18 @@ int execute_redir(struct Redir* node)
             return child_status;
     }
 }
+
+
+int execute_redir(struct Redir* node)
+{
+    if(node->redir == 0)
+    {
+        int ionum = node->ionum;
+        if(node->ionum == -1)
+            ionum = 1;
+        return execute_redir_greater(node, ionum);
+    }
+    else
+        return 0;
+}
+
