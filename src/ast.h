@@ -8,9 +8,11 @@ struct Node
     struct Node *left;
     struct Node *right;
     char **command;
+    struct Node *pipe;
 };
 
 struct Node* create_node(char *args);
-struct Node* build_tree(char **tokens);
+//struct Node* build_tree(char **tokens);
+struct Node* build_tree(char **tokens, int i, int *eaten);
 void print_node(struct Node *tree);
 void free_tree(struct Node *tree);

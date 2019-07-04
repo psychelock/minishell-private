@@ -5,6 +5,7 @@ struct Node* create_node(char *args)
     struct Node* res = (struct Node *)calloc(1, sizeof(struct Node));
     res->left = NULL;
     res->right = NULL;
+    res->pipe = NULL;
     char **cmd = (char **)calloc(1, sizeof(char *));
     cmd[0] = NULL;
     int count = 1;
@@ -24,26 +25,32 @@ struct Node* create_node(char *args)
 }
 
 
-struct Node* build_tree(char **tokens)
+struct Node* build_tree(char **tokens, int i, int *eaten)
 {
     struct Node *tree = NULL;
-    for(int i = 0; tokens[i]; i++)
+    for(; tokens[i]; i++)
     {
         struct Node *tmp = create_node(tokens[i]);
-        if(!is_seperator(tokens[i]))
+        if(is_seperator(tokens[i]))
+        {
+            tmp->left = tree;
+            tree = tmp;
+
+        }
+        else if (strcmp(tokens[i], "|") == 0)
+        {
+            tree->pipe  = build_tree(tokens, i+1, eaten);
+            i += *eaten;
+        }
+        else
         {
             if(!tree)
                 tree = tmp;
             else
                 tree->right = tmp;
         }
-        else
-        {
-            tmp->left = tree;
-            tree = tmp;
-        }
+        (* eaten)++;
     }
-    free_words(tokens);
     return tree;
 }
 

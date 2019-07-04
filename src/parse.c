@@ -159,6 +159,33 @@ char** parse_to_tokens(char *buffer)
                 start+=2;
                 continue;
             }
+            else
+            {
+                if(len != 0)
+                {
+                    rescount+=2;
+                    res = realloc(res, sizeof(char *) * (rescount));
+                    res[rescount-3] = (char *)calloc(255, sizeof(char));
+                    res[rescount-2] = (char *)calloc(255, sizeof(char));
+                    memcpy(res[rescount-3], buffer+start, len);
+                    memcpy(res[rescount-2], "|", 1);
+                    start += len;
+                    len = 0;
+                    res[rescount-1] = NULL;
+                }
+                else
+                { 
+                    res[rescount-1] = (char *)calloc(255, sizeof(char));
+                    memcpy(res[rescount-1], "|", 1);
+                    start += len;
+                    len = 0;
+                    rescount++;
+                    res = realloc(res, sizeof(char *) * (rescount));
+                    res[rescount-1] = NULL;
+                }
+                start++;
+                continue;
+            }
         }
         else if(!buffer[i+1])
         { 

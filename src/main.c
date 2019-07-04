@@ -8,6 +8,7 @@
 
 int main(int argc, char **argv)
 {
+    int returnval = 0;
     FILE *input = stdin;
     if (argc == 2) // file input
     { 
@@ -15,7 +16,10 @@ int main(int argc, char **argv)
         size_t len = 0;
         input = fopen(argv[1], "r");
         if (!input)
+        {
             printf("File failed to open");
+            exit(127);
+        }
         while(getline(&buf, &len, input) != -1)
         {
             if(buf[strlen(buf)-1] == '\n')
@@ -23,8 +27,18 @@ int main(int argc, char **argv)
             char **lol = parse_to_tokens(buf);
             if(*lol)
             {
-                struct Node *root = build_tree(lol);
-                execute_tree(root);
+                int eaten = 0;
+                int *peaten = &eaten;
+                struct Node *root = build_tree(lol, 0, peaten);
+                free_words(lol);
+                returnval = execute_pipes(root);
+                if(returnval >= 420)
+                {
+                    free_tree(root);
+                    free(buf);
+                    fclose(input);
+                    exit(returnval - 420);
+                }
                 free_tree(root);
             }
         }
@@ -46,8 +60,17 @@ int main(int argc, char **argv)
                 char ** lol = parse_to_tokens(buf);
                 if(*lol)
                 {
-                    struct Node *root = build_tree(lol);
-                    execute_tree(root);
+                    int eaten = 0;
+                    int *peaten = &eaten;
+                    struct Node *root = build_tree(lol, 0, peaten);
+                    free_words(lol);
+                    returnval = execute_pipes(root);
+                    if(returnval >= 420)
+                    {
+                        free_tree(root);
+                        free(buf);
+                        exit(returnval - 420);
+                    }
                     free_tree(root);
                 }
             }
@@ -61,8 +84,17 @@ int main(int argc, char **argv)
             char ** lol = parse_to_tokens(buf);
             if(*lol)
             {
-                struct Node *root = build_tree(lol);
-                execute_tree(root);
+                int eaten = 0;
+                int *peaten = &eaten;
+                struct Node *root = build_tree(lol, 0, peaten);
+                free_words(lol);
+                returnval = execute_pipes(root);
+                if(returnval >= 420)
+                {
+                    free_tree(root);
+                    free(buf);
+                    exit(returnval - 420);
+                }
                 free_tree(root);
             }
             free(buf);
