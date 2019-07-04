@@ -24,40 +24,52 @@ char *tostring(char **tokens)
 
 int execute_pipes(struct Node *root)
 {
-    int p[2];
-    pid_t pid;
-    int   fd_in = 0;
-    int returnval = 0;
-    while (root)
+    if(root->pipe)
     {
-        pipe(p);
-        if ((pid = fork()) == -1)
+        int fds [2];
+        assert(pipe(fds) != -1);
+        pid_t pid = fork();
+        if (pid == -1)
         {
             fprintf(stderr, "Pipe fail\n");
             return 127;
         }
-        else if (pid == 0)
+        if(pid)
         {
-            dup2(fd_in, 0); //change the input according to the old one 
-            if (root->pipe)
-                dup2(p[1], 1);
-            close(p[0]);
-            returnval = execute_tree(root, 0);
+            close(fds[0]);
+            close(fds[1]);
+            int exitstat;
+            assert(waitpid(pid, &exitstat, 0) != -1);
+            return exitstat;
         }
-        else
+
+        pid_t pid2 = fork();
+        if (pid2 == -1)
         {
-            wait(NULL);
-            close(p[1]);
-            fd_in = p[0]; //save the input for the next command
-            root = root->pipe;
+            fprintf(stderr, "Pipe fail\n");
+            return 127;
         }
+        if (pid2)
+        {
+            int exitstat;
+            assert(waitpid(pid2, &exitstat, 0) != -1);
+            close(fds[1]);
+            assert(dup2(fds[0], 0) != -1);
+            close(fds[0]);
+            return execute_pipes(root->pipe);
+        }
+        close(fds[0]);
+        assert(dup2(fds[1], 1) != -1);
+        int returnval = execute_tree(root, 0);
+        close(fds[1]);
+        return returnval;
     }
-    return returnval;
+    return execute_tree(root, 0);
 }
 
 int execute_tree (struct Node *root, int returnval)
 {
-    if(returnval >= 420 || !root)
+    if((returnval >=420 && returnval <= 655) || (!root))
         return returnval;
     if(root->left)
         returnval =  execute_tree(root->left, returnval);
@@ -106,7 +118,7 @@ int execute_node(char **tokens)
             char *cmd = tokens[0];
             execvp(cmd, tokens);
             fprintf(stderr, "Execution failed\n");
-            return 127;
+            return 126;
         }
         else
         {

@@ -31,15 +31,18 @@ int main(int argc, char **argv)
                 int *peaten = &eaten;
                 struct Node *root = build_tree(lol, 0, peaten);
                 free_words(lol);
-                returnval = execute_pipes(root);
-                if(returnval >= 420)
+                if(root)
                 {
+                    returnval = execute_pipes(root);
+                    if(returnval >= 420)
+                    {
+                        free_tree(root);
+                        free(buf);
+                        fclose(input);
+                        exit(returnval - 420);
+                    }
                     free_tree(root);
-                    free(buf);
-                    fclose(input);
-                    exit(returnval - 420);
                 }
-                free_tree(root);
             }
         }
         free(buf);
@@ -64,14 +67,17 @@ int main(int argc, char **argv)
                     int *peaten = &eaten;
                     struct Node *root = build_tree(lol, 0, peaten);
                     free_words(lol);
-                    returnval = execute_pipes(root);
-                    if(returnval >= 420)
+                    if(root)
                     {
+                        returnval = execute_pipes(root);
+                        if(returnval >= 420)
+                        {
+                            free_tree(root);
+                            free(buf);
+                            exit(returnval - 420);
+                        }
                         free_tree(root);
-                        free(buf);
-                        exit(returnval - 420);
                     }
-                    free_tree(root);
                 }
             }
             free(buf);
@@ -88,14 +94,17 @@ int main(int argc, char **argv)
                 int *peaten = &eaten;
                 struct Node *root = build_tree(lol, 0, peaten);
                 free_words(lol);
-                returnval = execute_pipes(root);
-                if(returnval >= 420)
+                if(root)
                 {
+                    returnval = execute_pipes(root);
+                    if(returnval >= 420)
+                    {
+                        free_tree(root);
+                        free(buf);
+                        exit(returnval - 420);
+                    }
                     free_tree(root);
-                    free(buf);
-                    exit(returnval - 420);
                 }
-                free_tree(root);
             }
             free(buf);
         }
