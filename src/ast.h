@@ -1,5 +1,7 @@
 #pragma once
 #include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
 
 #include "parse.h"
 
@@ -9,13 +11,14 @@ struct Node
     struct Node *right;
     char **command;
     struct Node *pipe;
+    struct Redir *redir;
 };
 
 struct Redir
 {
     int ionum;
-    char redir;
-    char *string;
+    int redir;
+    char **string;
     struct Redir *next;
 };
 

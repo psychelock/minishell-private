@@ -13,4 +13,5 @@
 
 int execute_tree (struct Node *root, int returnval);
 int execute_node(char **tokens);
+int execute_redir(struct Redir* redir_node);
 int execute_pipes(struct Node *root);

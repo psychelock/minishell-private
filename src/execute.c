@@ -73,18 +73,25 @@ int execute_tree (struct Node *root, int returnval)
         return returnval;
     if(root->left)
         returnval =  execute_tree(root->left, returnval);
-    if(!is_seperator(*root->command))
+    if(root->command)
     {
-        returnval = execute_node(root->command);
+        if(!is_seperator(*root->command))
+        {
+            returnval = execute_node(root->command);
+        }
+        else
+        {
+            if(strcmp((*root->command), "&&") == 0 && returnval == 0)
+                return execute_tree(root->right, returnval);
+            else if(strcmp((*root->command), "||") == 0 && returnval != 0)
+                return execute_tree(root->right, returnval);
+            else if(strcmp((*root->command), ";") == 0)
+                return execute_tree(root->right, returnval);
+        }
     }
     else
     {
-        if(strcmp((*root->command), "&&") == 0 && returnval == 0)
-            return execute_tree(root->right, returnval);
-        else if(strcmp((*root->command), "||") == 0 && returnval != 0)
-            return execute_tree(root->right, returnval);
-        else if(strcmp((*root->command), ";") == 0)
-            return execute_tree(root->right, returnval);
+        returnval = execute_redir(root->redir);
     }
     return returnval;
 }
@@ -131,37 +138,33 @@ int execute_node(char **tokens)
     }
 }
 
-
-/*
-   if(is_redirection(tokens))
-   {
-   int kidpid;
-   int tpid;
-   int child_status;
-   int fd = open(tokens[3], O_WRONLY|O_TRUNC|O_CREAT, 0644);
-   if (fd < 0) { fprintf (stderr, "Redirection file open\n"); return 1;}
-   switch (kidpid = fork()) 
-   {
-   case -1:
-   fprintf(stderr, "fork fail\n");
-   return -1;
-   case 0:
-   if (dup2(fd, 2) < 0) 
-   {
-   fprintf(stderr, "dup2\n"); 
-   return -1;
-   }
-   close(fd);
-   execvp(tokens[0], tokens); 
-   fprintf(stderr, "Execvp failed\n");
-   return 127;
-   default:
-   close(fd);
-   do
-   {
-   tpid = wait(&child_status);
-   } while(tpid != kidpid);
-   return child_status;
-   }
-   }
- */
+int execute_redir(struct Redir* node)
+{
+    pid_t child_pid, parent_pid;
+    int child_status;
+    int fd = open(node->next->string[0], O_WRONLY|O_TRUNC|O_CREAT, 0644);
+    if (fd < 0) { fprintf (stderr, "Redirection file open\n"); return 1;}
+    switch(child_pid = fork())
+    {
+        case -1:
+            fprintf(stderr, "Fork fail\n");
+            return -1;
+        case 0:
+            if(dup2(fd, 2) < 0)
+            {
+                fprintf(stderr, "dup2 fail\n");
+                return -1;
+            }
+            close(fd);
+            execvp(node->string[0], node->string);
+            fprintf(stderr, "execvp fail\n");
+            return 127;
+        default:
+            close(fd);
+            do
+            {
+                parent_pid = wait(&child_status);
+            }while(parent_pid != child_pid);
+            return child_status;
+    }
+}
