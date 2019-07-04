@@ -1,5 +1,17 @@
 #include "ast.h"
 
+void free_tree_aux(struct Node *tree)
+{
+    if(!tree)
+        return;
+    if(tree->left)
+        free_tree(tree->left);
+    if(tree->right)
+        free_tree(tree->right);
+    free_words(tree->command);
+    free(tree);
+}
+
 struct Node* create_node(char *args)
 {
     struct Node* res = (struct Node *)calloc(1, sizeof(struct Node));
@@ -24,9 +36,18 @@ struct Node* create_node(char *args)
     return res;
 }
 
+int number(char **tokens)
+{
+    int count = 0;
+    for(int i = 0; tokens[i]; i++)
+        count++;
+    return count;
+}
 
 struct Node* build_tree(char **tokens, int i, int *eaten)
 {
+    if(!tokens)
+        return NULL;
     struct Node *tree = NULL;
     for(; tokens[i]; i++)
     {
@@ -35,10 +56,10 @@ struct Node* build_tree(char **tokens, int i, int *eaten)
         {
             tmp->left = tree;
             tree = tmp;
-
         }
         else if (strcmp(tokens[i], "|") == 0)
         {
+            free_tree_aux(tmp);
             tree->pipe  = build_tree(tokens, i+1, eaten);
             i += *eaten;
         }
@@ -50,6 +71,8 @@ struct Node* build_tree(char **tokens, int i, int *eaten)
                 tree->right = tmp;
         }
         (* eaten)++;
+        if(i >= number(tokens))
+            break;
     }
     return tree;
 }
@@ -65,12 +88,12 @@ void print_node(struct Node *tree)
 
 void free_tree(struct Node *tree)
 {
-    if(!tree)
-        return;
-    if(tree->left)
-        free_tree(tree->left);
-    if(tree->right)
-        free_tree(tree->right);
-    free_words(tree->command);
-    free(tree);
+    struct Node *tmp;
+    while(tree != NULL)
+    {
+        tmp = tree;
+        tree = tree->pipe;
+        free_tree_aux(tmp);
+    }
 }
+

@@ -189,7 +189,7 @@ char** parse_to_tokens(char *buffer)
         }
         else if(!buffer[i+1])
         { 
-            res[rescount-1] = (char *)calloc(255, sizeof(char));
+            res[rescount-1] = (char *)calloc(len+2, sizeof(char));
             memcpy(res[rescount-1], buffer+start, len+1);
             rescount++;
             res = realloc(res, sizeof(char *) * (rescount));
