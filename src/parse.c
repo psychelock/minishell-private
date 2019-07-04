@@ -64,6 +64,8 @@ void free_words(char **tokens)
 
 char** parse_to_tokens(char *buffer)
 {
+    if(!buffer || strcmp(buffer, "") == 0)
+        return NULL;
     char **res = (char **)calloc(1, sizeof(char *));
     res[0] = NULL;
     int rescount = 1;

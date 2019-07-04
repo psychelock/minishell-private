@@ -11,6 +11,14 @@ struct Node
     struct Node *pipe;
 };
 
+struct Redir
+{
+    int ionum;
+    char redir;
+    char *string;
+    struct Redir *next;
+};
+
 struct Node* create_node(char *args);
 //struct Node* build_tree(char **tokens);
 struct Node* build_tree(char **tokens, int i, int *eaten);

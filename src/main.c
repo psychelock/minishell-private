@@ -25,7 +25,7 @@ int main(int argc, char **argv)
             if(buf[strlen(buf)-1] == '\n')
                 buf[strlen(buf)-1] = 0;
             char **lol = parse_to_tokens(buf);
-            if(*lol)
+            if(lol && *lol)
             {
                 int eaten = 0;
                 int *peaten = &eaten;
@@ -61,7 +61,7 @@ int main(int argc, char **argv)
                 if(buf[strlen(buf)-1] == '\n')
                     buf[strlen(buf)-1] = 0;
                 char ** lol = parse_to_tokens(buf);
-                if(*lol)
+                if(lol && *lol)
                 {
                     int eaten = 0;
                     int *peaten = &eaten;
@@ -88,7 +88,7 @@ int main(int argc, char **argv)
             if(buf[strlen(buf)-1] == '\n')
                 buf[strlen(buf)-1] = 0;
             char ** lol = parse_to_tokens(buf);
-            if(*lol)
+            if(lol && *lol)
             {
                 int eaten = 0;
                 int *peaten = &eaten;
