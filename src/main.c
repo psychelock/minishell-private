@@ -25,7 +25,9 @@ int main(int argc, char **argv)
             if(buf[strlen(buf)-1] == '\n')
                 buf[strlen(buf)-1] = 0;
             char **lol = parse_to_tokens(buf);
-            if(lol && *lol)
+            if(!lol)
+                return 2;
+            if(*lol)
             {
                 int eaten = 0;
                 int *peaten = &eaten;
@@ -47,6 +49,7 @@ int main(int argc, char **argv)
         }
         free(buf);
         fclose(input);
+        return returnval;
     }
     else
     {
@@ -61,7 +64,9 @@ int main(int argc, char **argv)
                 if(buf[strlen(buf)-1] == '\n')
                     buf[strlen(buf)-1] = 0;
                 char ** lol = parse_to_tokens(buf);
-                if(lol && *lol)
+                if(!lol)
+                    return 2;
+                if(*lol)
                 {
                     int eaten = 0;
                     int *peaten = &eaten;
@@ -81,6 +86,7 @@ int main(int argc, char **argv)
                 }
             }
             free(buf);
+            return returnval;
         }
         else    //pipeline
         {
@@ -88,7 +94,9 @@ int main(int argc, char **argv)
             if(buf[strlen(buf)-1] == '\n')
                 buf[strlen(buf)-1] = 0;
             char ** lol = parse_to_tokens(buf);
-            if(lol && *lol)
+            if(!lol)
+                return 2;
+            if(*lol)
             {
                 int eaten = 0;
                 int *peaten = &eaten;
@@ -107,7 +115,7 @@ int main(int argc, char **argv)
                 }
             }
             free(buf);
+            return returnval;
         }
-        return 0;
     }
 }

@@ -11,6 +11,11 @@ static int parse_error(char **tokens)
     int count = 0;
     for(int i = 0; tokens[i]; i++)
         count++;
+    if(is_seperator(tokens[count-1]))
+    {
+        if(strcmp(tokens[count-1], ";") != 0)
+            return 2;
+    }
     char *prev = NULL;
     char *next = tokens[1];
     for(int i = 0; tokens[i];)
@@ -202,7 +207,6 @@ char** parse_to_tokens(char *buffer)
     }
     if(parse_error(res))
     {
-        return res;
         free_words(res);
         return NULL;
     }

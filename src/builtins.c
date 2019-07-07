@@ -45,7 +45,10 @@ int builtin_cd(char **args)
     {
         int a = chdir(args[0]);
         if(a)
+        {
             fprintf(stderr, "cd failed\n");
+            return 1;
+        }
         return a;   
     }
 }
@@ -63,7 +66,7 @@ int builtin_exit(char **args)
     }
     else if((int)strlen(args[0]) != snprintf(NULL, 0, "%i", atoi(args[0])))
         fprintf(stderr, "Invalid argument");
-    return atoi(args[0]) + 420;
+    return (atoi(args[0]) % 255 ) + 420;
 }
 
 static int is_signal(int signal)

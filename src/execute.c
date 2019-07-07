@@ -69,8 +69,10 @@ int execute_pipes(struct Node *root)
 
 int execute_tree (struct Node *root, int returnval)
 {
-    if((returnval >=420 && returnval <= 655) || (!root))
+    if((returnval >=420 && returnval <= 675) || (!root))
         return returnval;
+    if(returnval > 255)
+        returnval -= 255;
     if(root->left)
         returnval =  execute_tree(root->left, returnval);
     if(root->command)
@@ -93,6 +95,10 @@ int execute_tree (struct Node *root, int returnval)
     {
         returnval = execute_redir(root->redir);
     }
+    if((returnval >=420 && returnval <= 675) || (!root))
+        return returnval;
+    if(returnval > 255)
+        returnval -= 255;
     return returnval;
 }
 
@@ -168,7 +174,6 @@ int execute_redir_greater(struct Redir *node, int ionum)
             return child_status;
     }
 }
-
 
 int execute_redir(struct Redir* node)
 {
